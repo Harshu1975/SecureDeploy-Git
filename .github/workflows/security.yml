@@ -17,11 +17,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --source . --no-git --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -38,11 +38,14 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install pip-audit
+        run: python -m pip install --upgrade pip pip-audit
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Check dependencies
-        run: pip audit
+      - name: Dependency Security Scan
+        run: pip-audit
 
   build:
     name: Build Docker Image
