@@ -102,3 +102,24 @@ jobs:
           format: 'table'
           severity: 'HIGH,CRITICAL'
           exit-code: '0'
+  trivy:
+    name: Trivy Container Security Scan
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t securedeploy:latest .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'securedeploy:latest'
+          format: 'table'
+          severity: 'HIGH,CRITICAL'
+          exit-code: '0'
